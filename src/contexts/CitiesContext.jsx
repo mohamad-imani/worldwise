@@ -4,6 +4,7 @@ import {
   useContext,
   useReducer,
   useCallback,
+  useState,
 } from "react";
 
 import {
@@ -20,7 +21,6 @@ const initialState = {
   isLoading: false,
   currentCity: {},
   error: "",
-  
 };
 
 function reducer(state, action) {
@@ -39,6 +39,7 @@ function reducer(state, action) {
       return { ...state, isLoading: false, currentCity: action.payload };
 
     case "city/created":
+      console.log("state after city created : ", state);
       return {
         ...state,
         isLoading: false,
@@ -47,10 +48,12 @@ function reducer(state, action) {
       };
 
     case "city/deleted":
+      console.log("state after city deleted : ", state);
+
       return {
         ...state,
         isLoading: false,
-        cities: state.cities.filter((city) => city.id !== action.payload),
+        cities: state.cities.filter((city) => city?.id !== action.payload),
         currentCity: {},
       };
 
@@ -71,7 +74,7 @@ function CitiesProvider({ children }) {
     reducer,
     initialState
   );
-
+  const [shouldFetch, setShouldFetch] = useState(true);
   useEffect(() => {
     async function fetchCitiesData() {
       dispatch({ type: "loading" });
@@ -86,8 +89,11 @@ function CitiesProvider({ children }) {
         });
       }
     }
-    fetchCitiesData();
-  }, []);
+    if (shouldFetch) {
+      fetchCitiesData();
+      setShouldFetch(false);
+    }
+  }, [shouldFetch]);
 
   const getCity = useCallback(
     async function getCity(id) {
@@ -109,11 +115,13 @@ function CitiesProvider({ children }) {
   );
 
   async function createCityHandler(newCity) {
-    console.log(newCity);
+    console.log("newCity : ", newCity);
     dispatch({ type: "loading" });
     try {
       const data = await createCity(newCity);
+      console.log("create city response", newCity);
       dispatch({ type: "city/created", payload: data });
+      setShouldFetch(true);
     } catch (error) {
       dispatch({
         type: "rejected",
@@ -128,6 +136,7 @@ function CitiesProvider({ children }) {
     try {
       await deleteCity(id);
       dispatch({ type: "city/deleted", payload: id });
+      setShouldFetch(true);
     } catch (error) {
       dispatch({
         type: "rejected",

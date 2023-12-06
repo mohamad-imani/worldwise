@@ -7,6 +7,7 @@ import { useCities } from "../contexts/CitiesContext";
 function CityList() {
   const { cities, isLoading, error } = useCities();
 
+
   if (isLoading) return <Spinner />;
 
   if (error) return <Message message={`Error: ${error}`} />;
@@ -23,7 +24,7 @@ function CityList() {
         if (city?.id) {
           return <CityItem city={city} key={city.id} />;
         }
-        return null; // or provide a default key
+       return null // or provide a default key
       })}
     </ul>
   );

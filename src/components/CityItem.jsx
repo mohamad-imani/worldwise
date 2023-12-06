@@ -17,7 +17,7 @@ function CityItem({ city }) {
 
   const handleDeleteCity = async () => {
     try {
-      const { data: cities, error } = await supabase
+      const { data, error } = await supabase
         .from("cities")
         .delete()
         .eq("id", id);
@@ -52,9 +52,6 @@ function CityItem({ city }) {
           &times;
         </button>
 
-        {/* <button className={styles.deleteBtn} onClick={handleDeleteCity}> 
-          &times;
-</button>*/}
       </Link>
     </li>
   );

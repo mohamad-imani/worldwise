@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import supabase from "../../supabase";
 import Button from "./Button";
 import BackButton from "./BackButton";
 
@@ -52,10 +52,14 @@ function Form() {
           const data = await res.json();
           console.log(data);
 
-          if (!data.countryCode)
+          if (!data.countryCode) {
+            setCityName("");
+            setCountry("");
+            setEmoji("");
             throw new Error(
               "That doesn't seem to be a city. Click somewhere else 😉"
             );
+          }
 
           setCityName(data.city || data.locality || "");
           setCountry(data.countryName);
@@ -132,7 +136,9 @@ function Form() {
       </div>
 
       <div className={styles.buttons}>
-        <Button type="primary">Add</Button>
+        <Button disabled={isLoading} type="primary">
+          Add
+        </Button>
         <BackButton />
       </div>
     </form>

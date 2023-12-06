@@ -17,13 +17,13 @@ async function fetchCityById(id) {
 }
 
 async function createCity(newCity) {
-    const { data, error } = await supabase.from('cities').upsert([newCity]);
-    if (error) {
-      throw new Error(error.message);
-    }
-    return data;
+  const { data, error } = await supabase.from('cities').upsert([newCity]);
+  if (error) {
+    throw new Error(error.message);
   }
-  
+  return data;
+}
+
 
 async function deleteCity(id) {
   const { error } = await supabase.from('cities').delete().eq('id', id);
